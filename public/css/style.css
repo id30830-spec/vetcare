@@ -1,0 +1,15 @@
+/* Overlay for image */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1;
+}
+
+/* Vetcare section background */
+.vetcare {
+    background-image: url('../images/vetcare.jpg');
+    background-size: cover;
+    background-position: center 85%;
+}
+
