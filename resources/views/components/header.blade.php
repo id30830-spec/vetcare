@@ -3,38 +3,55 @@
 
         {{-- Logo --}}
         <h1 class="text-2xl font-bold tracking-wide">
-            <a href="{{ url('/') }}" class="hover:opacity-90">
+            <a href="{{ route('home') }}" class="hover:opacity-90">
                 VetCare 🐾
             </a>
         </h1>
 
         {{-- Desktop Navigation --}}
         <nav class="hidden md:flex items-center space-x-6">
-            <x-nav-link url="/" :active="request()->is('/')">
+
+            {{-- Public links --}}
+            <x-nav-link url="{{ route('home') }}" :active="request()->routeIs('home')">
                 Home
             </x-nav-link>
 
-            <x-nav-link url="/services" :active="request()->is('services')">
+            <x-nav-link url="{{ route('services.index') }}" :active="request()->routeIs('services.*')">
                 Services
             </x-nav-link>
 
-            <x-nav-link
-                url="/appointments"
-                :active="request()->is('appointments')"
-                icon="calendar"
-            >
-                Appointments
-            </x-nav-link>
+            {{-- Auth links --}}
+            @guest
+                <x-nav-link url="{{ route('login') }}">
+                    Login
+                </x-nav-link>
 
-            <x-button-link
-                url="/appointments/create"
-                icon="calendar-plus"
-                bgClass="bg-blue-100"
-                hoverClass="hover:bg-white"
-                textClass="text-sky-800"
-            >
-                Book Visit
-            </x-button-link>
+                <x-nav-link url="{{ route('register') }}">
+                    Register
+                </x-nav-link>
+            @endguest
+
+            @auth@auth
+    <a href="{{ route('dashboard') }}" class="text-white hover:underline">
+        Dashboard
+    </a>
+
+    <form method="POST" action="{{ route('logout') }}" class="inline">
+        @csrf
+        <button type="submit" class="text-white hover:underline">
+            Logout
+        </button>
+    </form>
+@else
+    <a href="{{ route('login') }}" class="text-white hover:underline">
+        Login
+    </a>
+
+    <a href="{{ route('register') }}" class="text-white hover:underline">
+        Register
+    </a>
+@endauth
+
         </nav>
 
         {{-- Mobile Hamburger --}}
@@ -48,32 +65,35 @@
         id="mobile-menu"
         class="hidden bg-sky-800 text-white py-3 space-y-1 md:hidden"
     >
-        <x-nav-link url="/" :active="request()->is('/')" :mobile="true">
+        <x-nav-link url="{{ route('home') }}" :mobile="true">
             Home
         </x-nav-link>
 
-        <x-nav-link url="/services" :active="request()->is('services')" :mobile="true">
+        <x-nav-link url="{{ route('services.index') }}" :mobile="true">
             Services
         </x-nav-link>
 
-        <x-nav-link
-            url="/appointments"
-            :active="request()->is('appointments')"
-            :mobile="true"
-            icon="calendar"
-        >
-            Appointments
-        </x-nav-link>
+        @guest
+            <x-nav-link url="{{ route('login') }}" :mobile="true">
+                Login
+            </x-nav-link>
 
-        <x-button-link
-            url="/appointments/create"
-            icon="calendar-plus"
-            bgClass="bg-blue-100"
-            hoverClass="hover:bg-white"
-            textClass="text-sky-800"
-            :block="true"
-        >
-            Book Visit
-        </x-button-link>
+            <x-nav-link url="{{ route('register') }}" :mobile="true">
+                Register
+            </x-nav-link>
+        @endguest
+
+        @auth
+            <x-nav-link url="{{ route('dashboard') }}" :mobile="true">
+                Dashboard
+            </x-nav-link>
+
+            <form method="POST" action="{{ route('logout') }}" class="px-4">
+                @csrf
+                <button class="w-full text-left py-2 hover:bg-sky-700 rounded">
+                    Logout
+                </button>
+            </form>
+        @endauth
     </nav>
 </header>

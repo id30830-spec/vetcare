@@ -1,138 +1,142 @@
-<x-layout>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+@extends('layout')
 
-        {{-- MAIN CONTENT --}}
-        <section class="md:col-span-3">
+@section('title', $service->name)
 
-            {{-- SERVICE CARD --}}
-            <div class="rounded-lg shadow-md bg-white p-6">
+@section('content')
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-                {{-- Back + Admin actions --}}
-                <div class="flex justify-between items-center mb-4">
-                    <a href="{{ route('services.index') }}" class="text-indigo-700">
-                        ← Back to Services
-                    </a>
+    {{-- MAIN CONTENT --}}
+    <section class="md:col-span-3">
 
-                    @auth
-                        @if(auth()->user()->is_admin)
-                            <div class="flex gap-2">
-                                <a
-                                    href="{{ route('services.edit', $service) }}"
-                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded text-sm"
+        {{-- SERVICE CARD --}}
+        <div class="rounded-lg shadow-md bg-white p-6">
+
+            {{-- Back + Admin actions --}}
+            <div class="flex justify-between items-center mb-4">
+                <a href="{{ route('services.index') }}" class="text-indigo-700">
+                    ← Back to Services
+                </a>
+
+                @auth
+                    @if(auth()->user()->is_admin)
+                        <div class="flex gap-2">
+                            <a
+                                href="{{ route('services.edit', $service) }}"
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded text-sm"
+                            >
+                                Edit
+                            </a>
+
+                            <form
+                                action="{{ route('services.destroy', $service) }}"
+                                method="POST"
+                                onsubmit="return confirm('Are you sure you want to delete this service?')"
+                            >
+                                @csrf
+                                @method('DELETE')
+                                <button
+                                    type="submit"
+                                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm"
                                 >
-                                    Edit
-                                </a>
-
-                                <form
-                                    action="{{ route('services.destroy', $service) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('Are you sure you want to delete this service?')"
-                                >
-                                    @csrf
-                                    @method('DELETE')
-                                    <button
-                                        type="submit"
-                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm"
-                                    >
-                                        Delete
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
-                    @endauth
-                </div>
-
-                {{-- Title --}}
-                <h2 class="text-2xl font-semibold text-indigo-900">
-                    {{ $service->name }}
-                </h2>
-
-                {{-- Image --}}
-                @if($service->service_image)
-                    <img
-                        src="{{ asset('storage/' . $service->service_image) }}"
-                        alt="{{ $service->name }}"
-                        class="w-full h-64 object-cover rounded-lg my-4"
-                    >
-                @endif
-
-                {{-- Description --}}
-                @if($service->description)
-                    <p class="text-gray-700 text-lg mt-2">
-                        {{ $service->description }}
-                    </p>
-                @endif
-
-                {{-- Meta info --}}
-                <ul class="my-4 bg-gray-100 p-4 rounded space-y-1">
-                    @if($service->duration)
-                        <li>
-                            <strong>Duration:</strong> {{ $service->duration }} minutes
-                        </li>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
                     @endif
-
-                    @if(!is_null($service->price))
-                        <li>
-                            <strong>Price:</strong> ${{ number_format($service->price, 2) }}
-                        </li>
-                    @endif
-
-                    @if($service->category)
-                        <li>
-                            <strong>Category:</strong> {{ $service->category }}
-                        </li>
-                    @endif
-                </ul>
+                @endauth
             </div>
 
-            {{-- DETAILS --}}
-            @if($service->details)
-                <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold text-indigo-900 mb-2">
-                        Service Details
-                    </h3>
+            {{-- Title --}}
+            <h2 class="text-2xl font-semibold text-indigo-900">
+                {{ $service->name }}
+            </h2>
 
-                    <p class="text-gray-700">
-                        {{ $service->details }}
-                    </p>
-                </div>
+            {{-- Image --}}
+            @if($service->service_image)
+                <img
+                    src="{{ asset('storage/' . $service->service_image) }}"
+                    alt="{{ $service->name }}"
+                    class="w-full h-64 object-cover rounded-lg my-4"
+                >
             @endif
 
-            {{-- BOOKING --}}
-            <a
-                href="{{ route('appointments.create', $service) }}"
-                class="mt-6 block w-full text-center px-5 py-3 rounded
-                       bg-indigo-600 text-white hover:bg-indigo-700"
-            >
-                Book Appointment
-            </a>
+            {{-- Description --}}
+            @if($service->description)
+                <p class="text-gray-700 text-lg mt-2">
+                    {{ $service->description }}
+                </p>
+            @endif
 
-        </section>
+            {{-- Meta info --}}
+            <ul class="my-4 bg-gray-100 p-4 rounded space-y-1">
+                @if($service->duration)
+                    <li>
+                        <strong>Duration:</strong> {{ $service->duration }} minutes
+                    </li>
+                @endif
 
-        {{-- SIDEBAR --}}
-        <aside class="bg-white rounded-lg shadow-md p-4">
-            <h3 class="text-xl text-center font-bold mb-4">
-                Vet Clinic Info
-            </h3>
+                @if(!is_null($service->price))
+                    <li>
+                        <strong>Price:</strong> ${{ number_format($service->price, 2) }}
+                    </li>
+                @endif
 
-            <img
-                src="/images/Vet_logo.jpg"
-                alt="Vet Clinic Logo"
-                class="w-full rounded mb-4"
-            >
+                @if($service->category)
+                    <li>
+                        <strong>Category:</strong> {{ $service->category }}
+                    </li>
+                @endif
+            </ul>
+        </div>
 
-            <h4 class="text-lg font-bold">
-                Happy Paws Veterinary Clinic
-            </h4>
+        {{-- DETAILS --}}
+        @if($service->details)
+            <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-indigo-900 mb-2">
+                    Service Details
+                </h3>
 
-            <p class="text-gray-700 my-3">
-                Professional veterinary care with love and compassion.
-            </p>
+                <p class="text-gray-700">
+                    {{ $service->details }}
+                </p>
+            </div>
+        @endif
 
-            <a href="/contact" class="text-indigo-500 hover:underline">
-                Contact Us
-            </a>
-        </aside>
+        {{-- BOOKING --}}
+        <a
+            href="{{ route('appointments.create', $service) }}"
+            class="mt-6 block w-full text-center px-5 py-3 rounded
+                   bg-indigo-600 text-white hover:bg-indigo-700"
+        >
+            Book Appointment
+        </a>
 
-    </div>
-</x-layout>
+    </section>
+
+    {{-- SIDEBAR --}}
+    <aside class="bg-white rounded-lg shadow-md p-4">
+        <h3 class="text-xl text-center font-bold mb-4">
+            Vet Clinic Info
+        </h3>
+
+        <img
+            src="/images/Vet_logo.jpg"
+            alt="Vet Clinic Logo"
+            class="w-full rounded mb-4"
+        >
+
+        <h4 class="text-lg font-bold">
+            Happy Paws Veterinary Clinic
+        </h4>
+
+        <p class="text-gray-700 my-3">
+            Professional veterinary care with love and compassion.
+        </p>
+
+        <a href="/contact" class="text-indigo-500 hover:underline">
+            Contact Us
+        </a>
+    </aside>
+
+</div>
+@endsection

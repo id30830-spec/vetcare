@@ -1,4 +1,6 @@
-<x-layout>
+@extends('layout')
+
+@section('content')
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
         @forelse($services as $service)
@@ -95,4 +97,4 @@
         @endforelse
 
     </div>
-</x-layout>
+@endsection

@@ -1,85 +1,37 @@
-<x-layout>
+@extends('layout')
 
-    <section class="bg-gradient-to-b from-sky-100 to-white py-16">
-        <div class="max-w-4xl mx-auto px-6">
+@section('title', 'My Appointments')
 
-            {{-- Page Title --}}
-            <div class="text-center mb-10">
-                <h1 class="text-4xl font-bold text-indigo-900">
-                    VetCare Appointments 🐾
-                </h1>
-                <p class="mt-3 text-slate-600">
-                    View and manage your pet’s upcoming visits
-                </p>
-            </div>
+@section('content')
+<h2 class="text-2xl font-bold mb-6">My Appointments</h2>
 
-            {{-- Success Message --}}
-            @if(session('success'))
-                <div class="bg-green-100 text-green-800 px-4 py-3 rounded-lg mb-6 text-center shadow">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            {{-- Appointments List --}}
-            @forelse ($appointments as $appointment)
-                <div class="bg-white rounded-xl shadow-md p-6 mb-5 flex flex-col md:flex-row md:items-center md:justify-between">
-
-                    {{-- Left Info --}}
-                    <div>
-                        <h2 class="text-xl font-semibold text-indigo-900">
-                            {{ $appointment->pet_name }}
-                        </h2>
-                        <p class="text-slate-600 mt-1">
-                            Service: {{ $appointment->service }}
-                        </p>
-                    </div>
-
-                    {{-- Right Side --}}
-                    <div class="mt-4 md:mt-0 text-right">
-                        <div class="text-sky-700 font-semibold mb-3">
-                            📅 {{ \Carbon\Carbon::parse($appointment->appointment_date)->format('F j, Y') }}
-                        </div>
-
-                        {{-- Actions --}}
-                        <div class="flex gap-4 justify-end">
-                            {{-- Edit --}}
-                            <a href="/appointments/{{ $appointment->id }}/edit"
-                               class="text-indigo-700 hover:underline">
-                                Edit
-                            </a>
-
-                            {{-- Delete --}}
-                            <form action="{{ route('appointments.destroy', $appointment->id) }}"
-                                  method="POST"
-                                  onsubmit="return confirm('Are you sure you want to cancel this appointment?')">
-                                @csrf
-                                @method('DELETE')
-
-                                <button
-                                    type="submit"
-                                    class="text-red-600 hover:text-red-800 underline font-medium">
-                                    Cancel
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
-            @empty
-                {{-- Empty State --}}
-                <div class="bg-white rounded-xl shadow p-10 text-center">
-                    <p class="text-slate-600 mb-4">
-                        No appointments booked yet.
-                    </p>
-                    <a href="/appointments/create"
-                       class="inline-block bg-indigo-900 hover:bg-sky-700
-                              text-white px-6 py-3 rounded-lg transition">
-                        Book Your First Appointment
-                    </a>
-                </div>
-            @endforelse
-
-        </div>
-    </section>
-
-</x-layout>
+<table class="w-full bg-white shadow rounded">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-3 text-left">Pet</th>
+            <th class="p-3 text-left">Service</th>
+            <th class="p-3 text-left">Date</th>
+            <th class="p-3 text-left">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($appointments as $appointment)
+            <tr class="border-t">
+                <td class="p-3">{{ $appointment->pet_name }}</td>
+                <td class="p-3">{{ $appointment->service }}</td>
+                <td class="p-3">{{ $appointment->appointment_date }}</td>
+                <td class="p-3">
+                    <form method="POST"
+                          action="{{ route('appointments.destroy', $appointment) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button class="text-red-600 hover:underline">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+@endsection
